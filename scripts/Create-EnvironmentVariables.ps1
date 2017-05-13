@@ -1,0 +1,1 @@
+[Environment]::SetEnvironmentVariable("OSVersion", [Environment]::OSVersion.Version.ToString(), "Machine")

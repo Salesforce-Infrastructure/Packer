@@ -1,0 +1,10 @@
+{
+    "OperatingSystem":"Server2012R2",
+    "Guest_OS_Type_VMware":"windows8srv-64",
+    "Guest_OS_Type_Virtualbox":"Windows2012_64",
+    "ISO_URL":"ISO/SW_DVD9_Windows_Svr_Std_and_DataCtr_2012_R2_64Bit_English_-4_MLF_X19-82891.ISO",
+    "Answer_File_Path":"Answer_Files/2012R2/Autounattend.xml",
+    "Headless":"true",
+    "Output_Directory":".",
+    "DiskSize":"20480"
+}

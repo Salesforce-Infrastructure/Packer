@@ -1,0 +1,1 @@
+# This is a file that is used for floppy files to help determine if a build is meant for physical hardware.

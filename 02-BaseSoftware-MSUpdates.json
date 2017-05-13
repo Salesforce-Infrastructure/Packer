@@ -1,0 +1,131 @@
+{
+  "builders": [
+    {
+      "name": "VMware",
+      "type": "vmware-vmx",
+      "tools_upload_flavor": "windows",
+      "source_path": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-BASE-VMware/{{user `OperatingSystem`}}-Base-VMware.vmx",
+      "headless": "{{user `Headless`}}",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "12h",
+      "winrm_port": "5985",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_timeout": "30m",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-UPDATED-VMware/",
+      "vm_name": "{{user `OperatingSystem`}}-Updated-VMware",
+      "floppy_files": [
+        "scripts/Set-RemoteMgmt.ps1"
+      ]
+    },
+    {
+      "name": "Physical",
+      "type": "vmware-vmx",
+      "source_path": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-BASE-VMware/{{user `OperatingSystem`}}-Base-VMware.vmx",
+      "headless": "{{user `Headless`}}",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "12h",
+      "winrm_port": "5985",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_timeout": "30m",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-UPDATED-Physical/",
+      "vm_name": "{{user `OperatingSystem`}}-Physical-VMware",
+      "floppy_files": [
+        "scripts/Set-RemoteMgmt.ps1",
+        "floppy/Physical.pac"
+      ]
+    },
+    {
+      "name": "Virtualbox",
+      "type": "virtualbox-ovf",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "4096"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ],
+      "source_path": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-BASE-Virtualbox/{{user `OperatingSystem`}}-Base-Virtualbox.ovf",
+      "headless": "{{user `Headless`}}",
+      "communicator": "winrm",
+      "winrm_port": "5985",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "12h",
+      "post_shutdown_delay": "5m",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_timeout": "30m",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-UPDATED-Virtualbox/",
+      "vm_name": "{{user `OperatingSystem`}}-Updated-Virtualbox",
+      "guest_additions_mode": "attach",
+      "floppy_files": [
+        "scripts/Set-RemoteMgmt.ps1"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "inline": ["(New-Object System.Net.WebClient).DownloadFile('http://chef.io/chef/install.msi', 'C:\\Windows\\Temp\\chef.msi');Start-Process 'msiexec' -ArgumentList '/qb /i C:\\Windows\\Temp\\chef.msi' -NoNewWindow -Wait"]
+    },
+    {
+      "type": "file",
+      "source": "PowerShell-Modules",
+      "Destination": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\Modules"
+    },
+    {
+      "type": "powershell",
+      "inline": ["New-Item -Path 'C:\\PackerScripts' -ItemType Directory -Force"]
+    },
+    {
+      "type": "file",
+      "source": "scripts/",
+      "Destination": "C:\\PackerScripts"
+    },
+    {
+      "type": "file",
+      "source": "PowerShell-Scripts/Network/Set-MaasNetworkConfig.ps1",
+      "Destination": "C:\\PackerScripts\\cloudinit-config\\Set-MaasNetworkConfig.ps1"
+    },
+    {
+      "type": "file",
+      "source": "scripts/PackerOrchestratorStart.bat",
+      "Destination": "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\PackerOrchestratorStart.bat"
+    },
+    {
+      "type": "powershell",
+      "inline": ["C:\\PackerScripts\\Set-RemoteMgmt.ps1 -Disable -Reboot"],
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant",
+      "valid_exit_codes": [0,16001]
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "720m"
+    },
+    {   
+      "type": "windows-restart"
+    }
+  ],
+   "variables":{
+    "OperatingSystem":"",
+    "Headless":"",
+    "Output_Directory":"."
+  }
+}

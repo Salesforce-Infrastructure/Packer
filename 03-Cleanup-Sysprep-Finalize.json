@@ -1,0 +1,144 @@
+{
+  "builders": [
+    {
+      "name": "Virtualbox",
+      "type": "virtualbox-ovf",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "4096"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ],
+      "source_path": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-UPDATED-Virtualbox/{{user `OperatingSystem`}}-Updated-Virtualbox.ovf",
+      "headless": "{{user `Headless`}}",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "12h",
+      "shutdown_command": "a:\\PackerShutdown.bat",
+      "shutdown_timeout": "1h",
+      "post_shutdown_delay": "5m",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Virtualbox/",
+      "vm_name": "{{user `OperatingSystem`}}-Cleaned-Virtualbox",
+      "guest_additions_mode": "disable",
+      "floppy_files": [
+        "scripts/PackerShutdown.bat"
+      ]
+    },
+    {
+      "name": "VMware",
+      "type": "vmware-vmx",
+      "source_path": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-UPDATED-VMware/{{user `OperatingSystem`}}-Updated-VMware.vmx",
+      "headless": "{{user `Headless`}}",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "12h",
+      "winrm_port": "5985",
+      "shutdown_command": "a:\\PackerShutdown.bat",
+      "shutdown_timeout": "1h",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-VMware/",
+      "vm_name": "{{user `OperatingSystem`}}-Cleaned-VMware",
+      "floppy_files": [
+        "scripts/PackerShutdown.bat"
+      ]
+    },
+    {
+      "name": "Physical",
+      "type": "vmware-vmx",
+      "source_path": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-UPDATED-Physical/{{user `OperatingSystem`}}-Physical-VMware.vmx",
+      "headless": "{{user `Headless`}}",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "12h",
+      "winrm_port": "5985",
+      "shutdown_command": "a:\\PackerShutdown.bat",
+      "shutdown_timeout": "1h",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Physical/",
+      "vm_name": "{{user `OperatingSystem`}}-Cleaned-Physical",
+      "floppy_files": [
+        "scripts/PackerShutdown.bat",
+        "floppy/Physical.pac"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "inline": ["New-Item -Path 'C:\\Windows\\Panther\\PackerUnattend' -ItemType Directory -Force"]
+    },
+    {
+      "type": "file",
+      "source": "Answer_Files/2016/Postunattend.xml",
+      "Destination": "C:\\Windows\\Panther\\PackerUnattend\\Postunattend.xml"
+    },
+    {
+      "type": "file",
+      "source": "scripts/SetupComplete.cmd",
+      "Destination": "C:\\Windows\\Setup\\Scripts\\SetupComplete.cmd"
+    },
+    {
+      "type": "powershell",
+      "script": "scripts/Cleanup.ps1",
+      "elevated_user": "vagrant",
+      "elevated_password": "vagrant"
+    },
+    {
+      "type": "windows-restart"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "only": [
+          "VMware",
+          "Virtualbox"
+          ],
+        "type": "vagrant",
+        "keep_input_artifact": true,
+        "output": "./{{.BuildName}}-{{user `OperatingSystem`}}-{{.Provider}}.box",
+        "vagrantfile_template": "vagrantfile-windows.template"
+      },
+      {
+        "only":[
+          "Physical"
+        ],
+        "type": "shell-local",
+        "inline": [
+          "qemu-img convert -O raw {{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Physical/disk-cl2.vmdk {{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Physical/{{user `OperatingSystem`}}-Physical.raw",
+          "tar -cvzf {{user `OperatingSystem`}}-Physical.tar.gz {{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Physical/{{user `OperatingSystem`}}-Physical.raw"
+        ]
+      },
+      {
+        "type": "shell-local",
+        "inline": [
+              "rm -rf OUTPUT-{{user `OperatingSystem`}}-BASE-*",
+              "rm -rf OUTPUT-{{user `OperatingSystem`}}-UPDATED-*",
+              "rm -rf PowerShell-Modules",
+              "rm -rf PowerShell-Scripts",
+              "rm -rf packer_cache"
+        ]
+      }
+    ]
+  ],
+  "variables":{
+    "OperatingSystem":"",
+    "Headless":"",
+    "Output_Directory":"."
+  }
+}

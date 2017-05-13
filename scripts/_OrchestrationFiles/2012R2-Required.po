@@ -1,0 +1,6 @@
+01C:\PackerScripts\PO-Net452.ps1
+02C:\PackerScripts\PO-Install-PowerShell51.ps1
+03C:\PackerScripts\PO-GuestTools.ps1
+04C:\PackerScripts\PO-CloudInit.ps1
+05C:\PackerScripts\PO-Curtin.ps1
+06C:\PackerScripts\PO-Install-Updates.ps1

@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "config": [
+    {
+      "id": "eno49",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "eno49",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "14:02:ec:7d:5a:10"
+    },
+    {
+      "id": "eno1",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "eno1",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "e0:07:1b:f6:a2:20"
+    },
+    {
+      "id": "eno2",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "eno2",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "e0:07:1b:f6:a2:21"
+    },
+    {
+      "id": "eno3",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "eno3",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "e0:07:1b:f6:a2:22"
+    },
+    {
+      "id": "eno4",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "eno4",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "e0:07:1b:f6:a2:23"
+    },
+    {
+      "id": "eno50",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "eno50",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "14:02:ec:7d:5a:11"
+    },
+    {
+      "id": "ens6f0",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "ens6f0",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "14:02:ec:77:b8:88"
+    },
+    {
+      "id": "ens6f1",
+      "mtu": 1500,
+      "type": "physical",
+      "name": "ens6f1",
+      "subnets": [
+        {
+          "type": "manual"
+        }
+      ],
+      "mac_address": "14:02:ec:77:b8:89"
+    },
+    {
+      "mtu": 1500,
+      "type": "bond",
+      "subnets": [
+        {
+          "gateway": "10.114.188.254",
+          "address": "10.114.188.50/24",
+          "type": "static",
+          "dns_nameservers": [
+            "10.114.188.1"
+          ]
+        }
+      ],
+      "id": "Prod-IP",
+      "mac_address": "14:02:ec:7d:5a:11",
+      "params": {
+        "bond-downdelay": 0,
+        "bond-miimon": 100,
+        "bond-lacp_rate": "fast",
+        "bond-mode": "802.3ad",
+        "bond-updelay": 0,
+        "bond-xmit_hash_policy": "layer2"
+      },
+      "bond_interfaces": [
+        "eno50",
+        "ens6f1"
+      ],
+      "name": "Prod-IP"
+    },
+    {
+      "id": "Prod-IP.8",
+      "mtu": 1500,
+      "type": "vlan",
+      "vlan_link": "Prod-IP",
+      "name": "Prod-IP.8",
+      "subnets": [
+        {
+          "address": "10.114.8.87/24",
+          "type": "static",
+          "dns_nameservers": [
+            "10.114.188.1"
+          ]
+        }
+      ],
+      "vlan_id": 8
+    },
+    {
+      "mtu": 1500,
+      "type": "bond",
+      "subnets": [
+        {
+          "address": "10.114.188.51/24",
+          "type": "static",
+          "dns_nameservers": [
+            "10.114.188.1"
+          ]
+        }
+      ],
+      "id": "IP-HB",
+      "mac_address": "14:02:ec:7d:5a:10",
+      "params": {
+        "bond-downdelay": 0,
+        "bond-miimon": 100,
+        "bond-lacp_rate": "fast",
+        "bond-mode": "802.3ad",
+        "bond-updelay": 0,
+        "bond-xmit_hash_policy": "layer2"
+      },
+      "bond_interfaces": [
+        "eno49",
+        "ens6f0"
+      ],
+      "name": "IP-HB"
+    },
+    {
+      "id": "IP-HB.92",
+      "mtu": 1500,
+      "type": "vlan",
+      "vlan_link": "IP-HB",
+      "name": "IP-HB.92",
+      "subnets": [
+        {
+          "address": "10.114.92.87/24",
+          "type": "static",
+          "dns_nameservers": [
+            "4.2.2.2"
+          ]
+        }
+      ],
+      "vlan_id": 92
+    },
+    {
+      "address": [
+        "10.114.188.1"
+      ],
+      "search": [
+        "qa.local",
+        "maas"
+      ],
+      "type": "nameserver"
+    }
+  ]
+}

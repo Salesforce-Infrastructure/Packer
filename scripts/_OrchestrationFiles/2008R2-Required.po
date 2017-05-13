@@ -1,0 +1,9 @@
+01C:\PackerScripts\PO-GuestTools.ps1
+02C:\PackerScripts\Configure-Updates.bat
+03C:\PackerScripts\KB3020369.ps1
+04C:\PackerScripts\KB3125574.ps1
+05C:\PackerScripts\KB2693187.ps1
+06C:\PackerScripts\PO-Net452.ps1
+07C:\PackerScripts\PO-ChocoBoxChef.ps1
+08C:\PackerScripts\PO-Install-PowerShell51.ps1
+09C:\PackerScripts\PO-Install-Updates.ps1

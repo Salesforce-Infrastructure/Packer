@@ -1,0 +1,4 @@
+01C:\PackerScripts\PO-GuestTools.ps1
+02C:\PackerScripts\PO-CloudInit.ps1
+03C:\PackerScripts\PO-Curtin.ps1
+04C:\PackerScripts\PO-Install-Updates.ps1

@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.guest = :windows
+  config.vm.communicator = "winrm"
+  config.vm.boot_timeout = 300
+  config.vm.network :forwarded_port, guest: 3389, host: 3389, id: 'rdp', auto_correct: true
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+
+  config.vm.provider 'hyperv' do |hv|
+    hv.ip_address_timeout = 240
+    hv.memory = 2048
+    hv.cpus = 2
+    hv.vm_integration_services = {
+      guest_service_interface: true,
+      heartbeat: true,
+      key_value_pair_exchange: false,
+      shutdown: true,
+      time_synchronization: true,
+      vss: true
+  }
+  end
+
+  config.vm.provider "vmware_fusion" do |vm|
+    vm.gui = false
+    vm.vmx["memsize"] = "1024"
+    vm.vmx["numvcpus"] = "2"
+  end
+end

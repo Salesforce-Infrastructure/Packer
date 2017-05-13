@@ -1,0 +1,96 @@
+{
+  "builders": [
+    {
+      "name": "VMware",
+      "type": "vmware-iso",
+      "disk_size": "{{user `DiskSize`}}",
+      "iso_url": "{{user `ISO_URL`}}",
+      "iso_checksum_type": "none",
+      "headless": "{{user `Headless`}}",
+      "boot_wait": "2m",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "6h",
+      "disk_type_id": "0",
+      "vm_name": "{{user `OperatingSystem`}}-Base-VMware",
+      "winrm_port": "5985",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "{{user `Guest_OS_Type_VMware`}}",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-BASE-VMware/",
+      "vnc_port_min": 5900,
+      "vnc_port_max": 5980,
+      "floppy_files": [
+        "{{user `Answer_File_Path`}}",
+        "scripts/Set-RemoteMgmt.ps1"
+      ],
+      "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "memsize": "4096",
+        "numvcpus": "4",
+        "scsi0.virtualDev": "lsisas1068",
+        "DiskName": ""
+      }
+    },
+    {
+      "name": "Virtualbox",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--natpf1", "guest_winrm,tcp,,5985,,5985" ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "4096"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ],
+      "disk_size": "{{user `DiskSize`}}",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-BASE-Virtualbox/",
+      "vm_name": "{{user `OperatingSystem`}}-Base-Virtualbox",
+      "guest_additions_mode": "attach",
+      "guest_os_type": "{{user `Guest_OS_Type_Virtualbox`}}",
+      "headless": "{{user `Headless`}}",
+      "iso_url": "{{user `ISO_URL`}}",
+      "hard_drive_interface": "sata",
+      "iso_checksum_type": "none",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 60 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_timeout": "1h",
+      "post_shutdown_delay": "5m",
+      "floppy_files": [
+        "{{user `Answer_File_Path`}}",
+        "scripts/Set-RemoteMgmt.ps1"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "windows-restart"
+    }
+  ],
+  "variables":{
+    "OperatingSystem":"",
+    "Guest_OS_Type_VMware":"",
+    "Guest_OS_Type_Virtualbox":"",
+    "ISO_URL":"",
+    "Answer_File_Path":"",
+    "Headless":"",
+    "Output_Directory":"."
+  }
+}
