@@ -20,7 +20,6 @@ OUTPUT*
 *.plist
 *.appinfo
 *-iso
-*.txt
 *.lck
 *.vmem
 *.vmem.lck
