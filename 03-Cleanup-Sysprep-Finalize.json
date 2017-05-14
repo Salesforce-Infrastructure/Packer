@@ -123,16 +123,6 @@
           "qemu-img convert -O raw {{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Physical/disk-cl2.vmdk {{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Physical/{{user `OperatingSystem`}}-Physical.raw",
           "tar -cvzf {{user `OperatingSystem`}}-Physical.tar.gz {{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-CLEANED-Physical/{{user `OperatingSystem`}}-Physical.raw"
         ]
-      },
-      {
-        "type": "shell-local",
-        "inline": [
-              "rm -rf OUTPUT-{{user `OperatingSystem`}}-BASE-*",
-              "rm -rf OUTPUT-{{user `OperatingSystem`}}-UPDATED-*",
-              "rm -rf PowerShell-Modules",
-              "rm -rf PowerShell-Scripts",
-              "rm -rf packer_cache"
-        ]
       }
     ]
   ],
