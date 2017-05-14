@@ -1,7 +1,8 @@
 Echo "mwrock winrm fix"
 mkdir -Path $env:windir/setup/scripts/
-netsh advfirewall firewall set rule name="WinRM-HTTP" new action=allow
-netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-in)" new action=allow
+
+Echo "Disable Firewall"
+netsh Advfirewall set allprofiles state off
 
 Echo "Disabling Administrator account"
 net user administrator /active:no
