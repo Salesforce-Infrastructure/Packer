@@ -1,0 +1,95 @@
+{
+  "builders": [
+    {
+      "name": "VMware",
+      "type": "vmware-iso",
+      "boot_command": [
+        "<up><wait><tab><wait> text ks=hd:fd0:/ks.cfg<enter><wait>"
+      ],
+      "http_directory": "http",
+      "boot_wait": "10s",
+      "disk_size": "{{user `DiskSize`}}",
+      "iso_url": "{{user `ISO_URL`}}",
+      "iso_checksum_type": "none",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "headless": "{{user `Headless`}}",
+      "disk_type_id": "0",
+      "vm_name": "{{user `OperatingSystem`}}-VMware",
+      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+      "guest_os_type": "{{user `Guest_OS_Type_VMware`}}",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-BASE-VMware/",
+      "vmx_data": {
+        "RemoteDisplay.vnc.enabled": "false",
+        "RemoteDisplay.vnc.port": "5900",
+        "memsize": "4096",
+        "numvcpus": "4",
+        "scsi0.virtualDev": "lsisas1068",
+        "DiskName": ""
+      },
+      "floppy_files": [
+         "kickstart/ks.cfg"
+      ],
+      "version": "11"
+    },
+    {
+      "name": "Virtualbox",
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<up><wait><tab><wait> text ks=hd:fd0:/ks.cfg<enter><wait>"
+      ],
+      "http_directory": "http",
+      "boot_wait": "10s",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--natpf1", "guest_winrm,tcp,,5985,,5985" ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "4096"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "48"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ],
+      "disk_size": "{{user `DiskSize`}}",
+      "output_directory": "{{ user `Output_Directory` }}/OUTPUT-{{user `OperatingSystem`}}-BASE-Virtualbox/",
+      "vm_name": "{{user `OperatingSystem`}}-Virtualbox",
+      "guest_additions_mode": "attach",
+      "guest_os_type": "{{user `Guest_OS_Type_Virtualbox`}}",
+      "headless": "{{user `Headless`}}",
+      "iso_url": "{{user `ISO_URL`}}",
+      "hard_drive_interface": "sata",
+      "iso_checksum_type": "none",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+      "shutdown_timeout": "1h",
+      "post_shutdown_delay": "5m",
+      "floppy_files": [
+         "kickstart/ks.cfg"
+      ]
+    }
+  ],
+  "variables":{
+    "OperatingSystem":"",
+    "Guest_OS_Type_VMware":"",
+    "Guest_OS_Type_Virtualbox":"",
+    "ISO_URL":"",
+    "Headless":"",
+    "Output_Directory":"."
+  }
+}

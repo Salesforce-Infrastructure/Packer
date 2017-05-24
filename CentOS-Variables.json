@@ -1,0 +1,9 @@
+{
+    "OperatingSystem":"CentOS-7.3",
+    "Guest_OS_Type_VMware":"centos-64",
+    "Guest_OS_Type_Virtualbox":"RedHat_64",
+    "ISO_URL":"ISO/CentOS-7-x86_64-DVD-1611.iso",
+    "Headless":"false",
+    "Output_Directory":".",
+    "DiskSize":"20480"
+}
